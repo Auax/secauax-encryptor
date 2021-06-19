@@ -1,0 +1,1 @@
+pyinstaller --onefile --add-data "ui\*.ico;." --add-data "ui\*.ui;." --icon=ui/icon.ico window.py
