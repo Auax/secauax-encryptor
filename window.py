@@ -1,19 +1,13 @@
 import os
 import sys
+import webbrowser
+from typing import Any
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
 from PyQt5.uic import loadUi
+
 from secauax import Secauax
-from typing import Any
-import webbrowser
-
-
-# EXE Resource getter
-def resource_path(relative_path: str):
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
 
 
 class MainWindow(QMainWindow):
@@ -21,9 +15,9 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
 
         # Set Window settings
-        loadUi(resource_path("main.ui"), self)
+        loadUi("ui/main.ui", self)
         self.setWindowTitle("Secauax by Auax")
-        self.setWindowIcon(QtGui.QIcon(resource_path("icon.ico")))
+        self.setWindowIcon(QtGui.QIcon("ui/icon.ico"))
 
         self.enable = False  # Enable the encrypt and decrypt buttons
 

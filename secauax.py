@@ -1,7 +1,8 @@
-import os
 import glob
-from typing import Any, Union
+import os
 from pathlib import Path
+from typing import Union
+
 from cryptography.fernet import Fernet
 
 
