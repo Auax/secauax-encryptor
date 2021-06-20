@@ -12,14 +12,25 @@ from secauax import Secauax
 log = []
 
 
+def resource_path(relative_path: str) -> str:
+    """
+    Executable resource getter
+    :param relative_path: path to resource
+    :return: str
+    """
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
 
         # Set Window settings
-        loadUi("ui/main.ui", self)
+        loadUi(resource_path("resources/main.ui"), self)
         self.setWindowTitle("Secauax by Auax")
-        self.setWindowIcon(QtGui.QIcon("ui/icon.ico"))
+        self.setWindowIcon(QtGui.QIcon(resource_path("resources/icon.ico")))
 
         self.enable = False  # Enable the encrypt and decrypt buttons
 
