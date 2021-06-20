@@ -9,6 +9,8 @@ from PyQt5.uic import loadUi
 
 from secauax import Secauax
 
+log = []
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -145,12 +147,12 @@ class MainWindow(QMainWindow):
             if self.save_key_path.text():
                 # Save key to the desired path
                 secauax.save_key(self.save_key_path.text())
-                self.logger(f"<br>Key loaded from {self.save_key_path.text()}!")
+                self.logger(f"Key loaded from {self.save_key_path.text()}!")
 
             if self.load_key_path.text():
                 # Load key from the desired path
-                secauax.load_key(self.load_key_path.text())
-                self.logger(f"<br>Key saved in {self.load_key_path.text()}!")
+                secauax.load_key_into_class(self.load_key_path.text())
+                self.logger(f"Key saved in {self.load_key_path.text()}!")
 
             if self.mode_cb.isChecked():
                 # Directory mode
@@ -159,13 +161,14 @@ class MainWindow(QMainWindow):
                 # File mode
                 secauax.encrypt_file(self.input_path.text(), self.output_path.text())
 
-            self.logger(f"<br>File(s) successfuly encrypted in {self.output_path.text()}!")
+            self.logger(f"Used key: {secauax.key.decode()}")
+            self.logger(f"File(s) successfuly encrypted in {self.output_path.text()}!")
 
             # Show a message
-            MainWindow.create_dialog("File encrypted successfuly!", "", "Success!", QMessageBox.Information)
+            MainWindow.create_dialog("File(s) encrypted successfuly!", "", "Success!", QMessageBox.Information)
 
         except Exception as E:
-            self.logger("<br>Something went wrong! Please try again.")  # Log error
+            self.logger("Something went wrong! Please try again.")  # Log error
 
     def decrypt(self) -> None:
         """
@@ -179,12 +182,12 @@ class MainWindow(QMainWindow):
             if self.save_key_path.text():
                 # Save key to the desired path
                 secauax.save_key(self.save_key_path.text())
-                self.logger(f"<br>Key loaded from {self.save_key_path.text()}!")
+                self.logger(f"Key loaded from {self.save_key_path.text()}!")
 
             if self.load_key_path.text():
                 # Load key from the desired path
                 secauax.load_key_into_class(self.load_key_path.text())
-                self.logger(f"<br>Key saved in {self.load_key_path.text()}!")
+                self.logger(f"Key saved in {self.load_key_path.text()}!")
 
             if self.mode_cb.isChecked():
                 # Directory mode
@@ -193,13 +196,14 @@ class MainWindow(QMainWindow):
                 # File mode
                 secauax.decrypt_file(self.input_path.text(), self.output_path.text())
 
-            self.logger(f"<br>File(s) successfuly decrypted in {self.output_path.text()}!")
+            self.logger(f"Used key: {secauax.key.decode()}")
+            self.logger(f"File(s) successfuly decrypted in {self.output_path.text()}!")
 
             # Show message
-            MainWindow.create_dialog("File decrypted successfuly!", "", "Success!", QMessageBox.Information)
+            MainWindow.create_dialog("File(s) decrypted successfuly!", "", "Success!", QMessageBox.Information)
 
         except:
-            self.logger("<br>Something went wrong! Please try again.")  # Log error
+            self.logger("Something went wrong! Please try again.")  # Log error
 
     def logger(self, message: str, color: str = "red") -> None:
         """
@@ -208,7 +212,12 @@ class MainWindow(QMainWindow):
         :param color: the color of the message
         :return: None
         """
-        self.log.setHtml(f"<p style='color:{color}'>{self.log.toPlainText()}{message}</p>")
+        global log
+        log.append(message)
+        to_html = ""
+        for i in log:
+            to_html += f"<p style='margin: 2px 4px 2px 4px !important;'><code style='color:red'>>></code> {i}</p>"
+        self.log.setHtml(to_html)
 
     @staticmethod
     def create_dialog(message: str, informative_text: str, title: str = "Info", icon=QMessageBox.Critical) -> None:
