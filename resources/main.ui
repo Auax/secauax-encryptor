@@ -430,9 +430,11 @@ p, li { white-space: pre-wrap; }
    </property>
    <widget class="QMenu" name="menu_github">
     <property name="title">
-     <string>GitHub</string>
+     <string>Options</string>
     </property>
     <addaction name="open_github"/>
+    <addaction name="report_issue"/>
+    <addaction name="donate"/>
    </widget>
    <addaction name="menu_github"/>
   </widget>
@@ -445,6 +447,16 @@ p, li { white-space: pre-wrap; }
   <action name="actionReport_a_bug">
    <property name="text">
     <string>Report a bug</string>
+   </property>
+  </action>
+  <action name="report_issue">
+   <property name="text">
+    <string>Report Issue</string>
+   </property>
+  </action>
+  <action name="donate">
+   <property name="text">
+    <string>Donate</string>
    </property>
   </action>
  </widget>

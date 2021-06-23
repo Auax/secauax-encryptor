@@ -36,6 +36,8 @@ class MainWindow(QMainWindow):
 
         # Connect Menu
         self.open_github.triggered.connect(lambda: webbrowser.open("https://github.com/auax"))
+        self.report_issue.triggered.connect(lambda: webbrowser.open("https://github.com/auax/secauax/issues/new"))
+        self.donate.triggered.connect(lambda: webbrowser.open("https://paypal.me/zellius"))
 
         # Connect First Section (input path)
         self.browse_file_inp_btn.clicked.connect(lambda: self.browse_file(self.input_path))
