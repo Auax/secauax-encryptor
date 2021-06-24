@@ -300,6 +300,7 @@ class MainWindow(QMainWindow):
         msg.setWindowTitle(title)
         msg.exec_()
 
+
 # Run app
 app = QApplication(sys.argv)
 main_window = MainWindow()
