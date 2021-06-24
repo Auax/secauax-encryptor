@@ -128,7 +128,7 @@ class MainWindow(QMainWindow):
 
     def valid(self) -> None:
         """
-        # Check if the configuration is valid
+        Check if the configuration is valid
         :return: None
         """
 
@@ -143,7 +143,7 @@ class MainWindow(QMainWindow):
     @staticmethod
     def key_mode(this_checkbox, to_clear, to_enable) -> None:
         """
-        Alternate the key-mode
+        Enable or disable the key-mode
         :param this_checkbox: referred to the checked checkbox
         :param to_clear: the QLabel to clear
         :param to_enable: the button to enable
@@ -263,17 +263,20 @@ class MainWindow(QMainWindow):
 
     def logger(self, message: str, color: str = "black") -> None:
         """
-         Show message to the logger object
+         Add text to the logger object
         :param message: the message to display
-        :param color: the color of the message
+        :param color: color of the message
         :return: None
         """
-        self.log_data.append(message)
         to_html = ""
-        for i in self.log_data:
-            to_html += f"<p style='margin: 2px 4px 2px 4px !important;'><code style='color:red'>> </code><code " \
-                       f"style='color:{color}'>{i}</code></p> "
-        self.log.setHtml(to_html)
+        self.log_data.append(message)
+
+        for string in self.log_data:
+            to_html += f"<p style='margin: 2px 4px 2px 4px !important;'>" \
+                       f"<code style='color:red'>> </code>" \
+                       f"<code style='color:{color}'>{string}</code></p> "
+
+        self.log.setHtml(to_html)  # Set the generated HTML content
 
     def reset_logger(self) -> None:
         """
@@ -304,7 +307,7 @@ class MainWindow(QMainWindow):
 # Run app
 app = QApplication(sys.argv)
 main_window = MainWindow()
-main_window.setMinimumSize(1000, 670)
-main_window.setMaximumSize(1400, 870)
+print(main_window.geometry())
+main_window.setMinimumSize(650, 680)
 main_window.show()
 sys.exit(app.exec())

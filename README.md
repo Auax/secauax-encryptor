@@ -1,7 +1,7 @@
 # Secauax
 From `Secure Auax`
 
-### Only tested in Windows 10 at the moment!
+### Tested in Windows 10 and Linux (Ubuntu)
 ---
 ## How does it work?
 This program should be used to encrypt and decrypt files.
@@ -30,13 +30,12 @@ Open the Windows 10 console (CMD) and type: `python3 window.py`.
 
 ---
 # How to use it
-<img src="https://user-images.githubusercontent.com/16353807/122674238-7ae48280-d1d4-11eb-81d2-cc49cebcf233.png" />
+<img src="https://user-images.githubusercontent.com/16353807/123293519-5827d600-d514-11eb-98cb-ab361c3164a7.JPG" />
 This is the program's interface. To encrypt a file, you must select a file and set the output filename.
 
 ### Keys
 * When encrypting a file, you must store the key somewhere otherwise you WON'T be able to decrypt it later.
 * When decrypting a file, you must select the same key used to encrypt it, or you will encounter an error. 
-<img src="https://user-images.githubusercontent.com/16353807/122674252-8e8fe900-d1d4-11eb-9a72-e9e8174c17c1.png" height="120"/>
 
 ---
 **By Auax**
