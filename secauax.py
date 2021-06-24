@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import Union
 
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, InvalidToken
 
 
 class Secauax:
@@ -107,12 +107,20 @@ class Secauax:
         assert os.path.isdir(pathname), "pathname path doesn't exist"
         assert os.path.isdir(output_directory), "output_directory path doesn't exist"
 
-        try:
-            for file in glob.glob(os.path.join(pathname, file_extension)):
-                self.encrypt_file(file, os.path.join(output_directory, os.path.basename(file)))
-        except:
-            return False
-        return True
+        files_encrypted = 0
+
+        for file in glob.glob(os.path.join(pathname, file_extension)):
+            try:
+                filename = os.path.join(output_directory, os.path.basename(file))
+                if os.path.isdir(file):  # Skip folders
+                    continue
+                self.encrypt_file(file, filename)
+                files_encrypted += 1
+
+            except InvalidToken:
+                pass
+
+        return True if files_encrypted >= 1 else False
 
     def decrypt_file(self, path: Union[Path, str], filename: Union[Path, str] = None) -> bytes:
         """
@@ -138,6 +146,8 @@ class Secauax:
             decrypted_file.write(decrypted_data)
             decrypted_file.close()
 
+        return decrypted_data
+
     def bulk_decrypt(self,
                      pathname: Union[Path, str],
                      output_directory: Union[Path, str] = None,
@@ -145,19 +155,27 @@ class Secauax:
         """
         Decrypt all the files inside a directory and save them into another directory.
         Attention: If the output_directory parameter is not specified, the new file(s) will overwrite the original(s).
-        This method returns a true boolean if the files are saved successfully. Any error will result in a false boolean.
+        This method returns a true boolean if at least one file was decrypted.
         :param pathname: path to encrypted folder
         :param output_directory: path to save the decrypted files
-        :param file_extension: select which files will be decrypted. Format: ".png" or, for all type of files: "*"
+        :param file_extension: filter files by extension: ".png" / ".txt" / ...
         :return: bool
         """
 
         assert os.path.isdir(pathname), "pathname path doesn't exist"
         assert os.path.isdir(output_directory), "output_directory path doesn't exist"
 
-        try:
-            for file in glob.glob(os.path.join(pathname, file_extension)):
-                self.decrypt_file(file, os.path.join(output_directory, os.path.basename(file)))
-        except:
-            return False
-        return True
+        files_decrypted = 0
+
+        for file in glob.glob(os.path.join(pathname, file_extension)):
+            try:
+                filename = os.path.join(output_directory, os.path.basename(file))
+                if os.path.isdir(file):  # Skip folders
+                    continue
+                self.decrypt_file(file, filename)
+                files_decrypted += 1
+
+            except InvalidToken:
+                pass
+
+        return True if files_decrypted >= 1 else False

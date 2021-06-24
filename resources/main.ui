@@ -432,6 +432,8 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Options</string>
     </property>
+    <addaction name="clear_log"/>
+    <addaction name="separator"/>
     <addaction name="open_github"/>
     <addaction name="report_issue"/>
     <addaction name="donate"/>
@@ -457,6 +459,11 @@ p, li { white-space: pre-wrap; }
   <action name="donate">
    <property name="text">
     <string>Donate</string>
+   </property>
+  </action>
+  <action name="clear_log">
+   <property name="text">
+    <string>Clear Log</string>
    </property>
   </action>
  </widget>

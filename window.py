@@ -6,10 +6,9 @@ from typing import Any
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
 from PyQt5.uic import loadUi
+from cryptography.fernet import InvalidToken
 
 from secauax import Secauax
-
-log = []
 
 
 def resource_path(relative_path: str) -> str:
@@ -27,6 +26,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
 
+        self.log_data = []
+
         # Set Window settings
         loadUi(resource_path("resources/main.ui"), self)
         self.setWindowTitle("Secauax by Auax")
@@ -35,6 +36,7 @@ class MainWindow(QMainWindow):
         self.enable = False  # Enable the encrypt and decrypt buttons
 
         # Connect Menu
+        self.clear_log.triggered.connect(self.reset_logger)
         self.open_github.triggered.connect(lambda: webbrowser.open("https://github.com/auax"))
         self.report_issue.triggered.connect(lambda: webbrowser.open("https://github.com/auax/secauax/issues/new"))
         self.donate.triggered.connect(lambda: webbrowser.open("https://paypal.me/zellius"))
@@ -160,16 +162,17 @@ class MainWindow(QMainWindow):
             if self.save_key_path.text():
                 # Save key to the desired path
                 secauax.save_key(self.save_key_path.text())
-                self.logger(f"Key loaded from {self.save_key_path.text()}!")
+                self.logger(f"Key saved in {self.save_key_path.text()}!")
 
             if self.load_key_path.text():
                 # Load key from the desired path
                 secauax.load_key_into_class(self.load_key_path.text())
-                self.logger(f"Key saved in {self.load_key_path.text()}!")
+                self.logger(f"Key loaded from {self.load_key_path.text()}!")
 
             if self.mode_cb.isChecked():
                 # Directory mode
-                secauax.bulk_encrypt(self.input_path.text(), self.output_path.text())
+                if not secauax.bulk_encrypt(self.input_path.text(), self.output_path.text()):
+                    raise InvalidToken
             else:
                 # File mode
                 secauax.encrypt_file(self.input_path.text(), self.output_path.text())
@@ -180,8 +183,11 @@ class MainWindow(QMainWindow):
             # Show a message
             MainWindow.create_dialog("File(s) encrypted successfuly!", "", "Success!", QMessageBox.Information)
 
+        except InvalidToken:
+            self.logger("InvalidToken! Make sure to select the correct key.")
+
         except Exception as E:
-            self.logger("Something went wrong! Please try again.")  # Log error
+            self.logger(f"Unhandled error: {type(E).__name__}")
 
     def decrypt(self) -> None:
         """
@@ -195,16 +201,17 @@ class MainWindow(QMainWindow):
             if self.save_key_path.text():
                 # Save key to the desired path
                 secauax.save_key(self.save_key_path.text())
-                self.logger(f"Key loaded from {self.save_key_path.text()}!")
+                self.logger(f"Key saved in {self.save_key_path.text()}!")
 
             if self.load_key_path.text():
                 # Load key from the desired path
                 secauax.load_key_into_class(self.load_key_path.text())
-                self.logger(f"Key saved in {self.load_key_path.text()}!")
+                self.logger(f"Key loaded from {self.load_key_path.text()}!")
 
             if self.mode_cb.isChecked():
                 # Directory mode
-                secauax.bulk_decrypt(self.input_path.text(), self.output_path.text())
+                if not secauax.bulk_decrypt(self.input_path.text(), self.output_path.text()):
+                    raise InvalidToken
             else:
                 # File mode
                 secauax.decrypt_file(self.input_path.text(), self.output_path.text())
@@ -215,8 +222,11 @@ class MainWindow(QMainWindow):
             # Show message
             MainWindow.create_dialog("File(s) decrypted successfuly!", "", "Success!", QMessageBox.Information)
 
-        except:
-            self.logger("Something went wrong! Please try again.")  # Log error
+        except InvalidToken:
+            self.logger("InvalidToken! Make sure to select the correct key.")
+
+        except Exception as E:
+            self.logger(f"Unhandled error: {type(E).__name__}")
 
     def logger(self, message: str, color: str = "red") -> None:
         """
@@ -225,12 +235,19 @@ class MainWindow(QMainWindow):
         :param color: the color of the message
         :return: None
         """
-        global log
-        log.append(message)
+        self.log_data.append(message)
         to_html = ""
-        for i in log:
+        for i in self.log_data:
             to_html += f"<p style='margin: 2px 4px 2px 4px !important;'><code style='color:red'>>></code> {i}</p>"
         self.log.setHtml(to_html)
+
+    def reset_logger(self) -> None:
+        """
+        Clear all log data
+        :return: None
+        """
+        self.log_data = []
+        self.log.setHtml("")
 
     @staticmethod
     def create_dialog(message: str, informative_text: str, title: str = "Info", icon=QMessageBox.Critical) -> None:
