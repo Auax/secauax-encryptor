@@ -4,7 +4,7 @@ import sys
 import webbrowser
 from typing import Any
 
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
 from PyQt5.uic import loadUi
 from cryptography.fernet import InvalidToken
@@ -299,17 +299,6 @@ class MainWindow(QMainWindow):
         msg.setInformativeText(informative_text)
         msg.setWindowTitle(title)
         msg.exec_()
-
-
-def catch_exceptions(t, val, tb):
-    QtWidgets.QMessageBox.critical(None,
-                                   "An exception was raised",
-                                   "Exception type: {}".format(t))
-    old_hook(t, val, tb)
-
-
-old_hook = sys.excepthook
-sys.excepthook = catch_exceptions
 
 # Run app
 app = QApplication(sys.argv)
