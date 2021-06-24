@@ -1,13 +1,15 @@
+import getpass
 import os
 import sys
 import webbrowser
 from typing import Any
 
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
 from PyQt5.uic import loadUi
 from cryptography.fernet import InvalidToken
 
+from exceptions import Exit
 from secauax import Secauax
 
 
@@ -67,6 +69,8 @@ class MainWindow(QMainWindow):
         # Last section (encrypt and decrypt buttons)
         self.encrypt_btn.clicked.connect(self.encrypt)
         self.decrypt_btn.clicked.connect(self.decrypt)
+
+        self.logger(f"Welcome to Secauax, {getpass.getuser().capitalize()}")
 
     def browse_file(self, change_label: Any = None, save: bool = False) -> None:
         """
@@ -167,7 +171,7 @@ class MainWindow(QMainWindow):
             if self.load_key_path.text():
                 # Load key from the desired path
                 secauax.load_key_into_class(self.load_key_path.text())
-                self.logger(f"Key loaded from {self.load_key_path.text()}!")
+                self.logger(f"Key path set to: {self.load_key_path.text()}!")
 
             if self.mode_cb.isChecked():
                 # Directory mode
@@ -184,10 +188,24 @@ class MainWindow(QMainWindow):
             MainWindow.create_dialog("File(s) encrypted successfuly!", "", "Success!", QMessageBox.Information)
 
         except InvalidToken:
-            self.logger("InvalidToken! Make sure to select the correct key.")
+            self.logger("InvalidToken! Make sure to select the correct key.", "red")
+
+        except ValueError:
+            self.logger("Invalid Fernet key: Fernet key must be 32 url-safe base64-encoded bytes", "red")
 
         except Exception as E:
-            self.logger(f"Unhandled error: {type(E).__name__}")
+
+            if E.__class__ == Exit:
+                exitcode = E.exitcode
+
+                if exitcode == 1:
+                    self.logger("Couldn't save the key!", "red")
+
+                elif exitcode == 2:
+                    self.logger("Path to directory not found!", "red")
+
+            else:
+                self.logger(f"Unhandled error: {type(E).__name__}", "red")
 
     def decrypt(self) -> None:
         """
@@ -206,7 +224,7 @@ class MainWindow(QMainWindow):
             if self.load_key_path.text():
                 # Load key from the desired path
                 secauax.load_key_into_class(self.load_key_path.text())
-                self.logger(f"Key loaded from {self.load_key_path.text()}!")
+                self.logger(f"Key path set to: {self.load_key_path.text()}!")
 
             if self.mode_cb.isChecked():
                 # Directory mode
@@ -223,12 +241,27 @@ class MainWindow(QMainWindow):
             MainWindow.create_dialog("File(s) decrypted successfuly!", "", "Success!", QMessageBox.Information)
 
         except InvalidToken:
-            self.logger("InvalidToken! Make sure to select the correct key.")
+            self.logger("InvalidToken! Make sure to select the correct key.", "red")
+
+        except ValueError:
+            self.logger("Invalid Fernet key: Fernet key must be 32 url-safe base64-encoded bytes", "red")
 
         except Exception as E:
-            self.logger(f"Unhandled error: {type(E).__name__}")
 
-    def logger(self, message: str, color: str = "red") -> None:
+            if E.__class__ == Exit:
+                exitcode = E.exitcode
+
+                if exitcode == 1:
+                    self.logger("Couldn't save the key!", "red")
+
+                elif exitcode == 2:
+                    self.logger("Path to directory not found!", "red")
+
+            else:
+                self.logger(f"Unhandled error: {type(E).__name__}", "red")
+                raise E
+
+    def logger(self, message: str, color: str = "black") -> None:
         """
          Show message to the logger object
         :param message: the message to display
@@ -238,7 +271,8 @@ class MainWindow(QMainWindow):
         self.log_data.append(message)
         to_html = ""
         for i in self.log_data:
-            to_html += f"<p style='margin: 2px 4px 2px 4px !important;'><code style='color:red'>>></code> {i}</p>"
+            to_html += f"<p style='margin: 2px 4px 2px 4px !important;'><code style='color:red'>> </code><code " \
+                       f"style='color:{color}'>{i}</code></p> "
         self.log.setHtml(to_html)
 
     def reset_logger(self) -> None:
@@ -267,9 +301,20 @@ class MainWindow(QMainWindow):
         msg.exec_()
 
 
+def catch_exceptions(t, val, tb):
+    QtWidgets.QMessageBox.critical(None,
+                                   "An exception was raised",
+                                   "Exception type: {}".format(t))
+    old_hook(t, val, tb)
+
+
+old_hook = sys.excepthook
+sys.excepthook = catch_exceptions
+
 # Run app
 app = QApplication(sys.argv)
 main_window = MainWindow()
-main_window.setFixedSize(1000, 620)
+main_window.setMinimumSize(1000, 670)
+main_window.setMaximumSize(1400, 870)
 main_window.show()
 sys.exit(app.exec())
