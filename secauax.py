@@ -5,6 +5,8 @@ from typing import Union
 
 from cryptography.fernet import Fernet, InvalidToken
 
+from exceptions import Exit
+
 
 class Secauax:
     """
@@ -49,10 +51,10 @@ class Secauax:
         self.key_ = Secauax.load_key(path)
         return self.key
 
-    def save_key(self, filename: Union[Path, str]) -> bool:
+    def save_key(self, filename: Union[Path, str]) -> Union[bool, Exit]:
         """
         Save set key to a file. You can choose the file extension, although the ".key" extension is recommended.
-        This method returns a true boolean if the file is saved successfully. An OSError will result in a false boolean.
+        This method returns a true boolean if the file is saved successfully. An OSError will call the Exit class
         :param filename: path to save the key
         :return: bool
         """
@@ -61,7 +63,7 @@ class Secauax:
                 filekey.write(self.key)
                 filekey.close()
         except OSError:
-            return False
+            return Exit(Exit.KeyFailedToSave)
         return True
 
     def encrypt_file(self, path: Union[Path, str], filename: Union[Path, str] = None) -> bytes:
@@ -104,8 +106,8 @@ class Secauax:
         :return: bool
         """
 
-        assert os.path.isdir(pathname), "pathname path doesn't exist"
-        assert os.path.isdir(output_directory), "output_directory path doesn't exist"
+        if not os.path.isdir(pathname) or not os.path.isdir(output_directory):
+            raise Exit(Exit.DirectoryNotFound)
 
         files_encrypted = 0
 
@@ -161,9 +163,8 @@ class Secauax:
         :param file_extension: filter files by extension: ".png" / ".txt" / ...
         :return: bool
         """
-
-        assert os.path.isdir(pathname), "pathname path doesn't exist"
-        assert os.path.isdir(output_directory), "output_directory path doesn't exist"
+        if not os.path.isdir(pathname) or not os.path.isdir(output_directory):
+            raise Exit(Exit.DirectoryNotFound)
 
         files_decrypted = 0
 
