@@ -1,8 +1,10 @@
-import getpass
 import os
+import random
+import string
 import sys
+import tempfile
 import webbrowser
-from typing import Any
+from typing import Any, Callable
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
@@ -10,18 +12,9 @@ from PyQt5.uic import loadUi
 from cryptography.fernet import InvalidToken
 
 from exceptions import Exit
+from misc import callable
+from misc.callable import resource_path
 from secauax import Secauax
-
-
-def resource_path(relative_path: str) -> str:
-    """
-    Executable resource getter
-    :param relative_path: path to resource
-    :return: str
-    """
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
 
 
 class MainWindow(QMainWindow):
@@ -36,6 +29,7 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QtGui.QIcon(resource_path("resources/icon.ico")))
 
         self.enable = False  # Enable the encrypt and decrypt buttons
+        self.current_image_path = "resources/Images/preview.png"
 
         # Connect Menu
         self.clear_log.triggered.connect(self.reset_logger)
@@ -44,39 +38,103 @@ class MainWindow(QMainWindow):
         self.donate.triggered.connect(lambda: webbrowser.open("https://paypal.me/zellius"))
 
         # Connect First Section (input path)
-        self.browse_file_inp_btn.clicked.connect(lambda: self.browse_file(self.input_path))
+        self.browse_file_inp_btn.clicked.connect(lambda: self.browse_file(False,
+                                                                          callable.file_browser_label_wrapper,
+                                                                          check_config=True,
+                                                                          qlabel=self.input_path))
+
         self.browse_directory_inp_btn.clicked.connect(lambda: self.browse_folder(self.input_path))
 
         # Connect Second Section (output path)
-        self.browse_file_out_btn.clicked.connect(lambda: self.browse_file(self.output_path, True))
+        self.browse_file_out_btn.clicked.connect(lambda: self.browse_file(True,
+                                                                          callable.file_browser_label_wrapper,
+                                                                          check_config=True,
+                                                                          qlabel=self.output_path))
+
         self.browse_directory_out_btn.clicked.connect(lambda: self.browse_folder(self.output_path))
 
         # On change mode (file or directory)
-        self.mode_cb.stateChanged.connect(self.change_mode)
+        self.mode_cb.stateChanged.connect(self.change_file_mode)
 
         # On enable "save_key" checkbox
         self.save_key_cb.stateChanged.connect(lambda: MainWindow.key_mode(self.save_key_cb,
                                                                           self.save_key_path,
                                                                           self.browse_save_key_btn))
-        self.browse_save_key_btn.clicked.connect(lambda: self.browse_file(self.save_key_path, True))
+
+        self.browse_save_key_btn.clicked.connect(lambda: self.browse_file(True,
+                                                                          callable.file_browser_label_wrapper,
+                                                                          check_config=True,
+                                                                          qlabel=self.save_key_path))
 
         # On enable "load_key" checkbox
         self.load_key_cb.stateChanged.connect(lambda: MainWindow.key_mode(self.load_key_cb,
                                                                           self.load_key_path,
                                                                           self.browse_load_key_btn))
-        self.browse_load_key_btn.clicked.connect(lambda: self.browse_file(self.load_key_path))
+
+        self.browse_load_key_btn.clicked.connect(lambda: self.browse_file(False,
+                                                                          callable.file_browser_label_wrapper,
+                                                                          check_config=True,
+                                                                          qlabel=self.load_key_path))
 
         # Last section (encrypt and decrypt buttons)
         self.encrypt_btn.clicked.connect(self.encrypt)
         self.decrypt_btn.clicked.connect(self.decrypt)
 
-        self.logger(f"Welcome to Secauax, {getpass.getuser().capitalize()}")
+        # Preview Image
+        self.image_load_key.clicked.connect(lambda: self.browse_file(False,
+                                                                     callable.file_browser_image_key_wrapper,
+                                                                     check_config=False,
+                                                                     qlabel=self.image_key_path,
+                                                                     toggle_btn=self.load_image))
 
-    def browse_file(self, change_label: Any = None, save: bool = False) -> None:
+        self.load_image.clicked.connect(lambda: self.image_loader(qlabel=self.image_path))
+
+    def resizeEvent(self, event):
+        try:
+            pixmap = callable.generate_pixmap(self.current_image_path, self.geometry())
+            self.preview_image.setPixmap(pixmap)
+
+        except:
+            pass
+        # QMainWindow.resizeEvent(self, event)
+
+    def image_loader(self, qlabel):
+        fname = QFileDialog.getOpenFileName(self, "Select File")
+
+        path = fname[0]
+        if path:
+            qlabel.setText("Selected image: " + os.path.basename(path))
+            try:
+
+                # Dectrypt the image
+                try:
+                    decryptor = Secauax()
+                    decryptor.load_key_into_class(self.image_key_path.text())
+                    filename = os.path.join(tempfile.gettempdir(),
+                                            "".join(random.choices(string.ascii_lowercase, k=20)) +
+                                            path.split(".")[-1])
+                    decryptor.decrypt_file(path, filename)
+
+                except:
+                    filename = path
+                    self.logger("Couldn't decrypt image!")
+
+                pixmap = callable.generate_pixmap(filename, self.geometry())
+                self.preview_image.setPixmap(pixmap)
+                self.current_image_path = path
+
+            except:
+                self.logger("Couldn't load the image!", "red")
+
+        else:
+            qlabel.setText("No image selected")
+
+    def browse_file(self, save: bool = False, func: Callable = None, check_config=True, **kwargs) -> None:
         """
         Open file browser.
-        :param change_label: change a QLabel text to the path
         :param save: open browser in save mode
+        :param func: function to execute if the file is open
+        :param check_config: check if the configuration is valid to enable or disable the encrypt and decrypt buttons
         :return: None
         """
 
@@ -85,10 +143,9 @@ class MainWindow(QMainWindow):
         else:
             fname = QFileDialog.getOpenFileName(self, "Select File")
 
-        if change_label:
-            change_label.setText(fname[0])  # Change label text
-
-        self.valid()
+        func(fname, **kwargs)
+        if check_config:
+            self.valid()
         return fname
 
     def browse_folder(self, change_label: Any = None) -> None:
@@ -106,7 +163,7 @@ class MainWindow(QMainWindow):
         self.valid()
         return fname
 
-    def change_mode(self) -> None:
+    def change_file_mode(self) -> None:
         """
         Enable or disable the buttons and clear the paths based on the mode_cb checkbox
         :return: None
@@ -261,7 +318,7 @@ class MainWindow(QMainWindow):
                 self.logger(f"Unhandled error: {type(E).__name__}", "red")
                 raise E
 
-    def logger(self, message: str, color: str = "black") -> None:
+    def logger(self, message: str, color: str = "white") -> None:
         """
          Add text to the logger object
         :param message: the message to display
@@ -273,8 +330,8 @@ class MainWindow(QMainWindow):
 
         for string in self.log_data:
             to_html += f"<p style='margin: 2px 4px 2px 4px !important;'>" \
-                       f"<code style='color:red'>> </code>" \
-                       f"<code style='color:{color}'>{string}</code></p> "
+                       f"<span style='color:red'>> </span>" \
+                       f"<span style='color:{color}'>{string}</span></p> "
 
         self.log.setHtml(to_html)  # Set the generated HTML content
 
@@ -289,10 +346,10 @@ class MainWindow(QMainWindow):
     @staticmethod
     def create_dialog(message: str, informative_text: str, title: str = "Info", icon=QMessageBox.Critical) -> None:
         """
-        Create a dialog window
+        Create a dialog misc
         :param message: the message to show
         :param informative_text: the message below
-        :param title: the dialog window title
+        :param title: the dialog misc title
         :param icon: the icon to display.
         :return: None
         """
@@ -308,6 +365,6 @@ class MainWindow(QMainWindow):
 app = QApplication(sys.argv)
 main_window = MainWindow()
 print(main_window.geometry())
-main_window.setMinimumSize(650, 680)
+main_window.setMinimumSize(1450, 930)
 main_window.show()
 sys.exit(app.exec())
