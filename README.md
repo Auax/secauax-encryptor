@@ -25,6 +25,11 @@ This can be found in the `requirements.txt` file.
 ## Executable version:
 To run Secauax, double-click the executable file. The program should run as expected.
 
+You can also build an executable using `pyinsaller`
+
+
+Command: ``pyinstaller --onefile --noconsole --add-data="resources/*;resources/"  --icon=resources/icon.ico window.py``
+
 ## The source version:
 Open the Windows 10 console (CMD) and type: `python3 window.py`.
 
