@@ -1,8 +1,10 @@
-import getpass
 import os
+import random
+import string
 import sys
+import tempfile
 import webbrowser
-from typing import Any
+from typing import Any, Callable
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
@@ -10,32 +12,33 @@ from PyQt5.uic import loadUi
 from cryptography.fernet import InvalidToken
 
 from exceptions import Exit
+import callable
+from callable import resource_path
 from secauax import Secauax
 
 
-def resource_path(relative_path: str) -> str:
-    """
-    Executable resource getter
-    :param relative_path: path to resource
-    :return: str
-    """
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
-
-
 class MainWindow(QMainWindow):
+    """Window functionallity class
+    """
+
     def __init__(self):
         super(MainWindow, self).__init__()
 
-        self.log_data = []
+        self.log_data = []  # Logger info
+        self.enable = False  # Enable the encrypt and decrypt buttons
+
+        # Last previewed image
+        # (only for decrypted files, which are saved in the temp folder)
+        self.last_preview_img = None
+        # Image filename to display
+        # Default image -> preview.png
+        self.current_image_path = "resources/preview.png"
 
         # Set Window settings
+        print(resource_path("callable.py"))
         loadUi(resource_path("resources/main.ui"), self)
-        self.setWindowTitle("Secauax by Auax")
+        self.setWindowTitle("SecAuax")
         self.setWindowIcon(QtGui.QIcon(resource_path("resources/icon.ico")))
-
-        self.enable = False  # Enable the encrypt and decrypt buttons
 
         # Connect Menu
         self.clear_log.triggered.connect(self.reset_logger)
@@ -44,51 +47,134 @@ class MainWindow(QMainWindow):
         self.donate.triggered.connect(lambda: webbrowser.open("https://paypal.me/zellius"))
 
         # Connect First Section (input path)
-        self.browse_file_inp_btn.clicked.connect(lambda: self.browse_file(self.input_path))
+        self.browse_file_inp_btn.clicked.connect(lambda: self.browse_file(False,
+                                                                          callable.file_browser_label,
+                                                                          check_config=True,
+                                                                          qlabel=self.input_path))
+
         self.browse_directory_inp_btn.clicked.connect(lambda: self.browse_folder(self.input_path))
 
         # Connect Second Section (output path)
-        self.browse_file_out_btn.clicked.connect(lambda: self.browse_file(self.output_path, True))
+        self.browse_file_out_btn.clicked.connect(lambda: self.browse_file(True,
+                                                                          callable.file_browser_label,
+                                                                          check_config=True,
+                                                                          qlabel=self.output_path))
+
         self.browse_directory_out_btn.clicked.connect(lambda: self.browse_folder(self.output_path))
 
         # On change mode (file or directory)
-        self.mode_cb.stateChanged.connect(self.change_mode)
+        self.mode_cb.stateChanged.connect(self.change_file_mode)
 
         # On enable "save_key" checkbox
         self.save_key_cb.stateChanged.connect(lambda: MainWindow.key_mode(self.save_key_cb,
                                                                           self.save_key_path,
                                                                           self.browse_save_key_btn))
-        self.browse_save_key_btn.clicked.connect(lambda: self.browse_file(self.save_key_path, True))
+
+        self.browse_save_key_btn.clicked.connect(lambda: self.browse_file(True,
+                                                                          callable.file_browser_label,
+                                                                          check_config=True,
+                                                                          qlabel=self.save_key_path))
 
         # On enable "load_key" checkbox
         self.load_key_cb.stateChanged.connect(lambda: MainWindow.key_mode(self.load_key_cb,
                                                                           self.load_key_path,
                                                                           self.browse_load_key_btn))
-        self.browse_load_key_btn.clicked.connect(lambda: self.browse_file(self.load_key_path))
+
+        self.browse_load_key_btn.clicked.connect(lambda: self.browse_file(False,
+                                                                          callable.file_browser_label,
+                                                                          check_config=True,
+                                                                          qlabel=self.load_key_path))
 
         # Last section (encrypt and decrypt buttons)
         self.encrypt_btn.clicked.connect(self.encrypt)
         self.decrypt_btn.clicked.connect(self.decrypt)
 
-        self.logger(f"Welcome to Secauax, {getpass.getuser().capitalize()}")
+        # Preview Image
+        self.image_load_key.clicked.connect(lambda: self.browse_file(False,
+                                                                     callable.file_browser_image_key,
+                                                                     check_config=False,
+                                                                     qlabel=self.image_key_path,
+                                                                     toggle_btn=self.load_image))
 
-    def browse_file(self, change_label: Any = None, save: bool = False) -> None:
+        self.load_image.clicked.connect(lambda: self.image_loader(qlabel=self.image_path))
+
+    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+        """Override function called when the application is closed.
+        Removes the last temporal preview image """
+
+        if self.last_preview_img:
+            os.remove(self.last_preview_img)
+
+    def resizeEvent(self, event) -> None:
+        """Override function called when resizing the window."""
+        try:
+            # Resize preview image
+            pixmap = callable.generate_pixmap(self.current_image_path, self.geometry())
+            self.preview_image.setPixmap(pixmap)
+
+        except:
+            pass
+
+    def image_loader(self, qlabel) -> None:
+        """Load preview image.
+        :param qlabel: change a QLabel text to the filename
+        :return: None
+        """
+
+        # Open browser window
+        path = QFileDialog.getOpenFileName(self, "Select File")[0]
+
+        if path:
+            try:
+                qlabel.setText("Selected image: " + os.path.basename(path))  # Set label to filename
+                # Dectrypt the image
+                try:
+                    if self.last_preview_img:
+                        os.remove(self.last_preview_img)
+
+                    decryptor = Secauax()
+                    decryptor.load_key_into_class(self.image_key_path.text())
+                    filename = os.path.join(tempfile.gettempdir(),
+                                            "".join(random.choices(string.ascii_lowercase, k=20)))
+                    decryptor.decrypt_file(path, filename)
+                    self.last_preview_img = filename
+
+                except:  # Error decryping the image
+                    filename = path  # Try using the normal image (in case it's not encrypted)
+                    self.logger("Couldn't decrypt image!")  # Warn the user
+
+                # Create & assign the pixmap
+                pixmap = callable.generate_pixmap(filename, self.geometry())
+                self.preview_image.setPixmap(pixmap)
+                self.current_image_path = path
+
+            except:  # Error loading the image
+                self.logger("Couldn't load the image!", "red")
+
+        else:
+            qlabel.setText("No image selected")
+
+    def browse_file(self, save: bool = False, func: Callable = None, check_config=True, **kwargs) -> None:
         """
         Open file browser.
-        :param change_label: change a QLabel text to the path
         :param save: open browser in save mode
+        :param func: function to execute if the file is open
+        :param check_config: check if the configuration is valid to enable or disable the encrypt and decrypt buttons
         :return: None
         """
 
         if save:
+            # Open save-mode browser window
             fname = QFileDialog.getSaveFileName(self, "Save File")
         else:
+            # Open selection-mode browser window
             fname = QFileDialog.getOpenFileName(self, "Select File")
 
-        if change_label:
-            change_label.setText(fname[0])  # Change label text
+        func(fname, **kwargs)
 
-        self.valid()
+        if check_config:
+            self.valid()
+
         return fname
 
     def browse_folder(self, change_label: Any = None) -> None:
@@ -106,7 +192,7 @@ class MainWindow(QMainWindow):
         self.valid()
         return fname
 
-    def change_mode(self) -> None:
+    def change_file_mode(self) -> None:
         """
         Enable or disable the buttons and clear the paths based on the mode_cb checkbox
         :return: None
@@ -185,7 +271,7 @@ class MainWindow(QMainWindow):
             self.logger(f"File(s) successfuly encrypted in {self.output_path.text()}!")
 
             # Show a message
-            MainWindow.create_dialog("File(s) encrypted successfuly!", "", "Success!", QMessageBox.Information)
+            callable.create_dialog("File(s) encrypted successfuly!", "", "Success!", QMessageBox.Information)
 
         except InvalidToken:
             self.logger("InvalidToken! Make sure to select the correct key.", "red")
@@ -238,7 +324,7 @@ class MainWindow(QMainWindow):
             self.logger(f"File(s) successfuly decrypted in {self.output_path.text()}!")
 
             # Show message
-            MainWindow.create_dialog("File(s) decrypted successfuly!", "", "Success!", QMessageBox.Information)
+            callable.create_dialog("File(s) decrypted successfuly!", "", "Success!", QMessageBox.Information)
 
         except InvalidToken:
             self.logger("InvalidToken! Make sure to select the correct key.", "red")
@@ -261,7 +347,7 @@ class MainWindow(QMainWindow):
                 self.logger(f"Unhandled error: {type(E).__name__}", "red")
                 raise E
 
-    def logger(self, message: str, color: str = "black") -> None:
+    def logger(self, message: str, color: str = "white") -> None:
         """
          Add text to the logger object
         :param message: the message to display
@@ -271,10 +357,10 @@ class MainWindow(QMainWindow):
         to_html = ""
         self.log_data.append(message)
 
-        for string in self.log_data:
+        for st in self.log_data:
             to_html += f"<p style='margin: 2px 4px 2px 4px !important;'>" \
-                       f"<code style='color:red'>> </code>" \
-                       f"<code style='color:{color}'>{string}</code></p> "
+                       f"<span style='color:red'>> </span>" \
+                       f"<span style='color:{color}'>{st}</span></p> "
 
         self.log.setHtml(to_html)  # Set the generated HTML content
 
@@ -286,28 +372,10 @@ class MainWindow(QMainWindow):
         self.log_data = []
         self.log.setHtml("")
 
-    @staticmethod
-    def create_dialog(message: str, informative_text: str, title: str = "Info", icon=QMessageBox.Critical) -> None:
-        """
-        Create a dialog window
-        :param message: the message to show
-        :param informative_text: the message below
-        :param title: the dialog window title
-        :param icon: the icon to display.
-        :return: None
-        """
-        msg = QMessageBox()
-        msg.setIcon(icon)
-        msg.setText(message)
-        msg.setInformativeText(informative_text)
-        msg.setWindowTitle(title)
-        msg.exec_()
-
 
 # Run app
 app = QApplication(sys.argv)
 main_window = MainWindow()
-print(main_window.geometry())
-main_window.setMinimumSize(650, 680)
+main_window.setMinimumSize(1450, 930)
 main_window.show()
 sys.exit(app.exec())

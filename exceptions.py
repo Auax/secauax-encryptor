@@ -4,6 +4,7 @@ class Exit(Exception):
     """
     KeyFailedToSave = 1
     DirectoryNotFound = 2
+    KeyModeError = 3
 
     def __init__(self, exitcode):
         self.exitcode = exitcode

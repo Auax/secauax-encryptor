@@ -6,12 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>933</width>
-    <height>706</height>
+    <width>1463</width>
+    <height>944</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(34, 34, 56);
+color: rgb(255, 255, 255);
+
+
+
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
@@ -38,9 +46,28 @@
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+
+	background-color: qlineargradient(spread:pad, x1:0, y1:0.449, x2:1, y2:0.83, stop:0 rgba(196, 94, 251, 255), stop:1 rgba(116, 154, 241, 255));
+	border: none;
+}
+
+QPushButton:disabled {
+	color: rgb(139, 139, 139);
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(129, 62, 165, 129), stop:1 rgba(85, 112, 176, 129));
+}
+
+QPushButton:pressed {
+
+
+	background-color: qlineargradient(spread:pad, x1:0, y1:0.449, x2:1, y2:0.83, stop:0 rgba(130, 63, 167, 255), stop:1 rgba(72, 95, 149, 255));
+}
+</string>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <layout class="QVBoxLayout" name="content_layout" stretch="1,0,1,0,1,0,1,0,1">
+     <layout class="QVBoxLayout" name="content_layout" stretch="1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0">
       <property name="spacing">
        <number>10</number>
       </property>
@@ -54,7 +81,7 @@
        <number>10</number>
       </property>
       <property name="rightMargin">
-       <number>10</number>
+       <number>25</number>
       </property>
       <property name="bottomMargin">
        <number>10</number>
@@ -65,14 +92,14 @@
          <widget class="QLabel" name="title_inp">
           <property name="font">
            <font>
-            <family>Calibri</family>
+            <family>MADE GoodTime Grotesk</family>
             <pointsize>22</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
           <property name="text">
-           <string>INPUT PATH</string>
+           <string>Input Path</string>
           </property>
          </widget>
         </item>
@@ -96,9 +123,19 @@
           </property>
           <property name="font">
            <font>
-            <family>Calibri</family>
+            <family>Ubuntu</family>
             <pointsize>10</pointsize>
+            <weight>50</weight>
+            <italic>false</italic>
+            <bold>false</bold>
+            <underline>false</underline>
+            <kerning>true</kerning>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 10px;
+width: 140px;
+text-align: left;</string>
           </property>
           <property name="text">
            <string>Browse File</string>
@@ -118,9 +155,14 @@
           </property>
           <property name="font">
            <font>
-            <family>Calibri</family>
+            <family>Ubuntu</family>
             <pointsize>10</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 10px;
+width: 140px;
+text-align: left;</string>
           </property>
           <property name="text">
            <string>Browse Directory</string>
@@ -129,12 +171,27 @@
         </item>
         <item>
          <widget class="QLabel" name="input_path">
+          <property name="font">
+           <font>
+            <family>Ubuntu</family>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgba(255, 255, 255, 80);</string>
+          </property>
           <property name="text">
            <string/>
           </property>
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="verticalSpacer">
@@ -158,14 +215,14 @@
          <widget class="QLabel" name="title_out">
           <property name="font">
            <font>
-            <family>Calibri</family>
+            <family>MADE GoodTime Grotesk</family>
             <pointsize>22</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
           <property name="text">
-           <string>OUTPUT PATH</string>
+           <string>Output Path</string>
           </property>
          </widget>
         </item>
@@ -182,11 +239,16 @@
           </property>
           <property name="font">
            <font>
-            <family>Calibri</family>
+            <family>Ubuntu</family>
             <pointsize>10</pointsize>
             <weight>50</weight>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 10px;
+width: 140px;
+text-align: left;</string>
           </property>
           <property name="text">
            <string>Browse File</string>
@@ -206,9 +268,14 @@
           </property>
           <property name="font">
            <font>
-            <family>Calibri</family>
+            <family>Ubuntu</family>
             <pointsize>10</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 10px;
+width: 140px;
+text-align: left;</string>
           </property>
           <property name="text">
            <string>Browse Directory</string>
@@ -217,12 +284,27 @@
         </item>
         <item>
          <widget class="QLabel" name="output_path">
+          <property name="font">
+           <font>
+            <family>Ubuntu</family>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgba(255, 255, 255, 80);</string>
+          </property>
           <property name="text">
            <string/>
           </property>
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="verticalSpacer_2">
@@ -241,89 +323,112 @@
        </spacer>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="save_key_layout" stretch="0,0,0">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetDefaultConstraint</enum>
+       <widget class="QLabel" name="label_2">
+        <property name="font">
+         <font>
+          <family>MADE GoodTime Grotesk</family>
+          <pointsize>22</pointsize>
+         </font>
         </property>
-        <item>
-         <widget class="QCheckBox" name="save_key_cb">
-          <property name="text">
-           <string>Save Key</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="browse_save_key_btn">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Browse File</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="save_key_path">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
+        <property name="text">
+         <string>Key</string>
+        </property>
+       </widget>
       </item>
       <item>
-       <spacer name="verticalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="load_key_layout">
+       <layout class="QHBoxLayout" name="key_container" stretch="0,0">
         <item>
-         <widget class="QCheckBox" name="load_key_cb">
-          <property name="text">
-           <string>Load Key</string>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="load_key_layout">
+          <item>
+           <widget class="QCheckBox" name="save_key_cb">
+            <property name="text">
+             <string>Save Key</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="browse_save_key_btn">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="font">
+             <font>
+              <family>Ubuntu</family>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 10px;
+width: 140px;
+text-align: left;</string>
+            </property>
+            <property name="text">
+             <string>Filename</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="save_key_path">
+            <property name="font">
+             <font>
+              <family>Ubuntu</family>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgba(255, 255, 255, 80);</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="browse_load_key_btn">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Browse File</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="load_key_path">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="save_key_layout">
+          <item>
+           <widget class="QCheckBox" name="load_key_cb">
+            <property name="text">
+             <string>Load Key</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="browse_load_key_btn">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="font">
+             <font>
+              <family>Ubuntu</family>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 10px;
+width: 140px;
+text-align: left;</string>
+            </property>
+            <property name="text">
+             <string>Browse File</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="load_key_path">
+            <property name="font">
+             <font>
+              <family>Ubuntu</family>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgba(255, 255, 255, 80);
+</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -344,6 +449,121 @@
        </spacer>
       </item>
       <item>
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="log_layout">
+        <property name="spacing">
+         <number>9</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SetDefaultConstraint</enum>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="log_label_title">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Log:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="log">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Ubuntu</family>
+            <underline>false</underline>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2';&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="Line" name="line_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <layout class="QVBoxLayout" name="btns_layout">
         <item>
          <widget class="QPushButton" name="encrypt_btn">
@@ -355,6 +575,15 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Ubuntu</family>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 10px;
+width: 100px;</string>
           </property>
           <property name="text">
            <string>Encrypt</string>
@@ -372,6 +601,15 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="font">
+           <font>
+            <family>Ubuntu</family>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 10px;
+width: 100px;</string>
+          </property>
           <property name="text">
            <string>Decrypt</string>
           </property>
@@ -379,84 +617,14 @@
         </item>
        </layout>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="log_layout">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetDefaultConstraint</enum>
-      </property>
-      <property name="leftMargin">
-       <number>10</number>
-      </property>
-      <property name="topMargin">
-       <number>10</number>
-      </property>
-      <property name="rightMargin">
-       <number>25</number>
-      </property>
-      <property name="bottomMargin">
-       <number>10</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Log:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QTextEdit" name="log">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <underline>false</underline>
-          <kerning>true</kerning>
-         </font>
-        </property>
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-        <property name="html">
-         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
       <item>
        <widget class="QLabel" name="credits">
         <property name="font">
          <font>
+          <family>Ubuntu</family>
           <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
+          <weight>50</weight>
+          <bold>false</bold>
          </font>
         </property>
         <property name="layoutDirection">
@@ -469,6 +637,183 @@ p, li { white-space: pre-wrap; }
       </item>
      </layout>
     </item>
+    <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>37</width>
+        <height>17</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="Line" name="verticalSectionSeparator">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="image_preview_container">
+      <property name="leftMargin">
+       <number>20</number>
+      </property>
+      <property name="rightMargin">
+       <number>30</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="image_preview_title">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <family>MADE GoodTime Grotesk</family>
+          <pointsize>22</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Image Preview</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="image_path">
+        <property name="font">
+         <font>
+          <family>Ubuntu</family>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgba(255, 255, 255, 80);</string>
+        </property>
+        <property name="text">
+         <string>No image selected</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="preview_image">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="images.qrc">:/images/Images/preview.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="image_load_key">
+          <property name="styleSheet">
+           <string notr="true">padding: 10px;
+width: 100px;</string>
+          </property>
+          <property name="text">
+           <string>Key</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="load_image">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding: 10px;
+width: 100px;</string>
+          </property>
+          <property name="text">
+           <string>Load Image</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="image_key_path_label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Ubuntu</family>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Key Path: </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="image_key_path">
+            <property name="font">
+             <font>
+              <family>Ubuntu</family>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgba(255, 255, 255, 80);</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -476,7 +821,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>933</width>
+     <width>1463</width>
      <height>21</height>
     </rect>
    </property>
@@ -519,6 +864,8 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>
