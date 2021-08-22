@@ -9,7 +9,7 @@ It has been built with the `cryptography` package. The encryptation technique is
 Without the key, you cannot read the file.
 
 ## Download
-You can download the `Secauax by Auax.exe` file from <a href="https://www.mediafire.com/file/sqw7wl1z01dg699/SecauaxByAuax.exe/file">Mediafire</a>. This requires no installation of any packages.
+You can download the `Secauax by Auax.exe` file from the `executable` branch. This requires no installation of any packages.
 You can also download the source from the *main* branch.
 The program will run the same.
 
