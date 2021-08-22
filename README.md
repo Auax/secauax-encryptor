@@ -35,7 +35,7 @@ Open the Windows 10 console (CMD) and type: `python3 window.py`.
 
 ---
 # How to use it
-<img src="https://user-images.githubusercontent.com/16353807/123293519-5827d600-d514-11eb-98cb-ab361c3164a7.JPG" />
+![image](https://user-images.githubusercontent.com/16353807/130338599-a9127563-38ec-4690-bc09-a73cb78c4e2c.png)
 This is the program's interface. To encrypt a file, you must select a file and set the output filename.
 
 ### Keys
