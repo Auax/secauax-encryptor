@@ -18,7 +18,7 @@ from secauax import Secauax
 
 
 class MainWindow(QMainWindow):
-    """Window functionallity class
+    """Window functionality class
     """
 
     def __init__(self):
@@ -127,19 +127,19 @@ class MainWindow(QMainWindow):
         if path:
             try:
                 qlabel.setText("Selected image: " + os.path.basename(path))  # Set label to filename
-                # Dectrypt the image
+                # Decrypt the image
                 try:
                     if self.last_preview_img:
                         os.remove(self.last_preview_img)
 
-                    decryptor = Secauax()
-                    decryptor.load_key_into_class(self.image_key_path.text())
+                    secauax = Secauax()
+                    secauax.load_key_into_class(self.image_key_path.text())
                     filename = os.path.join(tempfile.gettempdir(),
                                             "".join(random.choices(string.ascii_lowercase, k=20)))
-                    decryptor.decrypt_file(path, filename)
+                    secauax.decrypt_file(path, filename)
                     self.last_preview_img = filename
 
-                except:  # Error decryping the image
+                except:  # Error decrypting the image
                     filename = path  # Try using the normal image (in case it's not encrypted)
                     self.logger("Couldn't decrypt image!")  # Warn the user
 
@@ -268,10 +268,10 @@ class MainWindow(QMainWindow):
                 secauax.encrypt_file(self.input_path.text(), self.output_path.text())
 
             self.logger(f"Used key: {secauax.key.decode()}")
-            self.logger(f"File(s) successfuly encrypted in {self.output_path.text()}!")
+            self.logger(f"File(s) successfully encrypted in {self.output_path.text()}!")
 
             # Show a message
-            callable.create_dialog("File(s) encrypted successfuly!", "", "Success!", QMessageBox.Information)
+            callable.create_dialog("File(s) encrypted successfully!", "", "Success!", QMessageBox.Information)
 
         except InvalidToken:
             self.logger("InvalidToken! Make sure to select the correct key.", "red")
@@ -321,10 +321,10 @@ class MainWindow(QMainWindow):
                 secauax.decrypt_file(self.input_path.text(), self.output_path.text())
 
             self.logger(f"Used key: {secauax.key.decode()}")
-            self.logger(f"File(s) successfuly decrypted in {self.output_path.text()}!")
+            self.logger(f"File(s) successfully decrypted in {self.output_path.text()}!")
 
             # Show message
-            callable.create_dialog("File(s) decrypted successfuly!", "", "Success!", QMessageBox.Information)
+            callable.create_dialog("File(s) decrypted successfully!", "", "Success!", QMessageBox.Information)
 
         except InvalidToken:
             self.logger("InvalidToken! Make sure to select the correct key.", "red")
@@ -376,6 +376,12 @@ class MainWindow(QMainWindow):
 # Run app
 app = QApplication(sys.argv)
 main_window = MainWindow()
-main_window.setMinimumSize(1450, 930)
+
+screen_size = app.primaryScreen().size()
+rw, rh = screen_size.width(), screen_size.height()  # Current screen resolution
+w = rw * 1450 / 1920
+h = rh * 930 / 1080
+
+main_window.setMinimumSize(w, h)
 main_window.show()
 sys.exit(app.exec())
