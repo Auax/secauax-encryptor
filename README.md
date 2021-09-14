@@ -1,7 +1,7 @@
 # Secauax
 From `Secure Auax`
 
-### Tested in Windows 10 and Linux (Ubuntu)
+### Tested in Windows 10, Linux (Ubuntu), and MacOS (Apple Silicon)
 ---
 ## How does it work?
 This program should be used to encrypt and decrypt files.
